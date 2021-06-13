@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name ProjectParts)(type Legacy)(uri ${KIPRJMOD}/ProjectParts.lib)(options "")(descr ""))
+  (lib (name ReceiverCircuit-rescue)(type Legacy)(uri ${KIPRJMOD}/ReceiverCircuit-rescue.lib)(options "")(descr ""))
+)

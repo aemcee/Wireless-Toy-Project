@@ -1,0 +1,21 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP LM386MX-1-NOPB
+D AUDIO POWER OPAMPS SOIC-8_150MIL ROHS
+F Texas-Instruments-TI-LM386MX-1-NOPB_C23573.pdf
+$ENDCMP
+#
+$CMP MAX232ESE+T
+D RS232 2/2 116KBPS 5V SOIC-16_150MIL ROHS
+F https://www.mouser.com/datasheet/2/256/MAX202E-MAX241E-1292516.pdf
+$ENDCMP
+#
+$CMP SJ1-3523N
+F CUI
+$ENDCMP
+#
+$CMP TPS7A0533
+D 0.2A, Low-Dropout Voltage Regulator, 1.4 to 5.5V Input, Fixed 3.3V Output, SOT-23
+$ENDCMP
+#
+#End Doc Library

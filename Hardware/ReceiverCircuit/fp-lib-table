@@ -1,0 +1,5 @@
+(fp_lib_table
+  (lib (name ReceiverCircuit)(type KiCad)(uri ${KIPRJMOD}/ReceiverCircuit.pretty)(options "")(descr "")(disabled))
+  (lib (name ProjectFootprint)(type KiCad)(uri ${KIPRJMOD}/ProjectFootprint.pretty)(options "")(descr ""))
+  (lib (name LogoSilkscreen)(type KiCad)(uri ${KIPRJMOD}/LogoSilkscreen.pretty)(options "")(descr ""))
+)
