@@ -15,7 +15,10 @@ VCC   -> No more than 3.6 volts
 GND   -> GND
 
 */
-
+#include <SD.h>                      // need to include the SD library
+//#define SD_ChipSelectPin 53  //example uses hardware SS pin 53 on Mega2560
+#define SD_ChipSelectPin 10  //using digital pin 4 on arduino nano 328, can use other pins. Using pin 10 for unitduino
+#include <TMRpcm.h>           //  also need to include this library...
 #include <SPI.h>
 #include <NRFLite.h>
 
@@ -34,9 +37,22 @@ struct RadioPacket // Any packet up to 32 bytes can be sent.
 NRFLite _radio;
 RadioPacket _radioData;
 
+
+TMRpcm tmrpcm;   // create an object for use in this sketch
+
 void setup()
 {
+    tmrpcm.speakerPin = 3;
+    
     Serial.begin(115200);
+
+    if (!SD.begin(SD_ChipSelectPin)) {  // see if the card is present and can be initialized:
+    Serial.println("SD fail");  
+    //return;   // don't do anything more if not
+    }
+    else{
+      Serial.println("SD card ok");
+    }
 
     // By default, 'init' configures the radio to use a 2MBPS bitrate on channel 100 (channels 0-125 are valid).
     // Both the RX and TX radios must have the same bitrate and channel to communicate with each other.
@@ -45,32 +61,23 @@ void setup()
     //   _radio.init(RADIO_ID, PIN_RADIO_CE, PIN_RADIO_CSN, NRFLite::BITRATE2MBPS, 100) // THE DEFAULT
     //   _radio.init(RADIO_ID, PIN_RADIO_CE, PIN_RADIO_CSN, NRFLite::BITRATE1MBPS, 75)
     //   _radio.init(RADIO_ID, PIN_RADIO_CE, PIN_RADIO_CSN, NRFLite::BITRATE250KBPS, 0)
-//    pinMode(10, OUTPUT); 
-//    pinMode(15, OUTPUT);
-//    digitalWrite(10, HIGH);
-//    digitalWrite(15, HIGH);
-//
-//    SPI.begin();
-    
+
+    //digitalWrite(10, HIGH);
     if (!_radio.init(RADIO_ID, PIN_RADIO_CE, PIN_RADIO_CSN))
     {
         Serial.println("Cannot communicate with radio");
         while (1); // Wait here forever.
+    }else{
+      Serial.println("Radio COM OK");
     }
-//    Serial.println("I think we can communicat"); 
+    //tmrpcm.play("DJ.wav");
 }
 
 void loop()
 {
-//    Serial.println("We're in the loop");
-//    if (!_radio.init(RADIO_ID, PIN_RADIO_CE, PIN_RADIO_CSN))
-//      {
-//          Serial.println("Cannot communicate with radio");
-////          while (1); // Wait here forever.
-//      }
+
     while (_radio.hasData())
     {
-        //Serial.print("radio has data "); 
         _radio.readData(&_radioData); // Note how '&' must be placed in front of the variable name.
 
         String msg = "Radio ";
@@ -82,6 +89,11 @@ void loop()
         msg += " Failed TX";
         msg += " Play Song is";
         msg += _radioData.PlaySong;
+
+        if(_radioData.PlaySong){
+          tmrpcm.play("DJ.wav");
+          msg += "I play muh song"; 
+        }
 
         Serial.println(msg);
     }
