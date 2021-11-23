@@ -36,11 +36,19 @@ struct RadioPacket // Any packet up to 32 bytes can be sent.
     uint8_t PlaySong;
 };
 
-NRFLite _radio;
-RadioPacket _radioData;
+struct eepromPacket
+{
+    char value1[5];
+    uint8_t value2;
+    float value3;
+};
 
-
-TMRpcm tmrpcm;   // create an object for use in this sketch
+NRFLite _radio; // for RF RX
+RadioPacket _radioData; // for RF RX packet
+TMRpcm tmrpcm;   // create an object for use in this sketch for music player
+ExternalEEPROM myMem; // for EEPROM
+eepromPacket eePkt1 = {"amc", 25, 3.14}; // for EEPROM 
+eepromPacket eePkt2;
 
 void setup()
 {
@@ -73,6 +81,38 @@ void setup()
       Serial.println("Radio COM OK");
     }
     //tmrpcm.play("DJ.wav");
+
+    //EEPROM Setup
+    Wire.begin();
+    Wire.setClock(400000); // Based on AT24C256C - Datasheet
+    
+    // Sparkfun EEPROM function from library to check if memory detected
+    if (myMem.begin() == false){
+      Serial.println("No EEPROM detected :'(");
+      while (1); 
+    }
+    Serial.println("EEPROM detected!");
+
+    // Set settings for the EEPROM
+
+    myMem.setMemorySize(256000/8); // 256kbit in bytes = 32kbyte
+    myMem.setPageSize(64); // EEPROM has 64 bytes per page
+    myMem.enablePollForWriteComplete(); // Supports I2C polling of write completion?
+    myMem.setPageWriteTime(5); // 5 ms max write time
+
+    Serial.print("EEPROM mem size in bytes: ");
+    Serial.println(myMem.length());
+
+    // Sample write and read. Will modify with struct data if this works
+//    float myValue3 = -7.35;
+    myMem.put(20, eePkt1); //(location, data), ex used myValue3
+//    float myRead3;
+    myMem.get(20, eePkt2); //location to read, thing to put data into. ex used myRead3
+    Serial.println("I read: ");
+    Serial.println(eePkt2.value1); // ex used myRead3
+    Serial.println(eePkt2.value2); // ex used myRead3
+    Serial.println(eePkt2.value3); // ex used myRead3
+    
 }
 
 void loop()
